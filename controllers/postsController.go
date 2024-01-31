@@ -6,18 +6,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func PostsCreate(c *gin.Context) {
+func UserCreate(c *gin.Context) {
 
 	var body struct {
-		Title string
-		Body  string
+		Name     string
+		Password string
+		Email    string
 	}
 	c.Bind(&body)
-	post := models.Post{Title: body.Title, Body: body.Body}
+
+	post := models.User{Name: body.Name, Password: body.Password, Email: body.Email}
 
 	result := initializers.DB.Create(&post)
 	c.JSON(200, gin.H{
-		"post": post,
+		"createUser": post,
 	})
 
 	if result.Error != nil {
@@ -26,16 +28,16 @@ func PostsCreate(c *gin.Context) {
 	}
 }
 
-func PostsIndex(c *gin.Context) {
-	var posts []models.Post
-	initializers.DB.Find(&posts)
+func UserIndex(c *gin.Context) {
+	var users []models.User
+	initializers.DB.Find(&users)
 	c.JSON(200, gin.H{
-		"posts": posts,
+		"posts": users,
 	})
 }
 
 func PostsShow(c *gin.Context) {
-	var post models.Post
+	var post models.User
 	id := c.Param("id")
 	initializers.DB.First(&post, id)
 	c.JSON(200, gin.H{
@@ -45,21 +47,23 @@ func PostsShow(c *gin.Context) {
 
 func PostsUpdate(c *gin.Context) {
 	//get id off of url
-	var post models.Post
+	var post models.User
 	id := c.Param("id")
 	//get data off of url
 	var body struct {
-		Title string
-		Body  string
+		Name     string
+		Password string
+		Email    string
 	}
 	c.Bind(&body)
 	//find post by id
 	initializers.DB.First(&post, id)
 	//update post
 	// Update attributes with `struct`, will only update non-zero fields
-	initializers.DB.Model(&post).Updates(models.Post{
-		Title: body.Title,
-		Body:  body.Body})
+	initializers.DB.Model(&post).Updates(models.User{
+		Name:     body.Name,
+		Password: body.Password,
+		Email:    body.Email})
 	//return updated post
 	c.JSON(200, gin.H{
 		"post": post,
@@ -67,7 +71,7 @@ func PostsUpdate(c *gin.Context) {
 }
 
 func PostsDelete(c *gin.Context) {
-	var post models.Post
+	var post models.User
 	id := c.Param("id")
 	initializers.DB.First(&post, id)
 	initializers.DB.Delete(&post)

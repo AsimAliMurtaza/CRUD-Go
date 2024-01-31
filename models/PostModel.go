@@ -2,8 +2,9 @@ package models
 
 import "gorm.io/gorm"
 
-type Post struct {
+type User struct {
 	gorm.Model
-	Title string
-	Body  string
+	Name     string
+	Password string
+	Email    string
 }
